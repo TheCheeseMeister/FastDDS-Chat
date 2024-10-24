@@ -3,6 +3,7 @@
  */
 
 #include "UserChatPubSubTypes.hpp";
+#include "EndThreadSignal.hpp"
 #include <chrono>
 #include <thread>
 
@@ -15,138 +16,143 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-extern std::atomic<bool> exit_sub_thread_flag;
-
 using namespace eprosima::fastdds::dds;
 
 class UserChatSubscriber
 {
-    private:
-        DomainParticipant* participant_;
-        Subscriber* subscriber_;
-        DataReader* reader_;
-        Topic* topic_;
-        TypeSupport type_;
+private:
+    DomainParticipant* participant_;
+    Subscriber* subscriber_;
+    DataReader* reader_;
+    Topic* topic_;
+    TypeSupport type_;
 
-        std::string topic_name;
+    std::string topic_name;
 
-        class SubListener : public DataReaderListener
-        {
-            public:
-                SubListener() : samples_(0)
-                {
-                }
+    bool is_type_registered;
 
-                ~SubListener() override
-                {
-                }
-
-                void on_subscription_matched(DataReader*, const SubscriptionMatchedStatus& info) override
-                {
-                    if (info.current_count_change == 1) {
-                        std::cout << "Subscriber matched." << std::endl;
-                    }
-                    else if (info.current_count_change == -1) {
-                        std::cout << "Subscriber unmatched." << std::endl;
-                    }
-                    else {
-                        std::cout << info.current_count_change << " is not a valid value for SubscriptionMatchedStatus current count change." << std::endl;
-                    }
-                }
-
-                void on_data_available(DataReader* reader) override
-                {
-                    SampleInfo info;
-                    if (reader->take_next_sample(&user_message_, &info) == eprosima::fastdds::dds::RETCODE_OK) {
-                        if (info.valid_data)
-                        {
-                            samples_++;
-
-                            if (user_message_.username() != "" && user_message_.message() != "") {
-                                std::cout << user_message_.username() + ": ";
-                                std::cout << user_message_.message() << std::endl;
-                            }
-                        }
-                    }
-                }
-
-                UserChat user_message_;
-
-                std::atomic_int samples_;
-        }
-        listener_;
-    
+    class SubListener : public DataReaderListener
+    {
     public:
-        UserChatSubscriber(std::string topic_name) 
-            : participant_(nullptr)
-            , subscriber_(nullptr)
-            , topic_(nullptr)
-            , reader_(nullptr)
-            , type_(new UserChatPubSubType())
+        SubListener() : samples_(0)
         {
-            this->topic_name = topic_name;
         }
 
-        virtual ~UserChatSubscriber()
+        ~SubListener() override
         {
-            if (reader_ != nullptr)
-            {
-                subscriber_->delete_datareader(reader_);
-            }
-            if (topic_ != nullptr)
-            {
-                participant_->delete_topic(topic_);
-            }
-            if (subscriber_ != nullptr)
-            {
-                participant_->delete_subscriber(subscriber_);
-            }
-            DomainParticipantFactory::get_instance()->delete_participant(participant_);
         }
 
-        bool init()
+        void on_subscription_matched(DataReader*, const SubscriptionMatchedStatus& info) override
         {
-            DomainParticipantQos participantQos;
-            participantQos.name("Participant_subscriber");
-            participant_ = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
-
-            if (participant_ == nullptr) {
-                return false;
+            if (info.current_count_change == 1) {
+                std::cout << "Subscriber matched." << std::endl;
             }
-
-            type_.register_type(participant_);
-
-            // Creates topic named after the user/group Subscriber will look for
-            topic_ = participant_->create_topic(topic_name, "UserChat", TOPIC_QOS_DEFAULT);
-
-            if (topic_ == nullptr) {
-                return false;
+            else if (info.current_count_change == -1) {
+                std::cout << "Subscriber unmatched." << std::endl;
             }
-
-            subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-
-            if (subscriber_ == nullptr)
-            {
-                return false;
+            else {
+                std::cout << info.current_count_change << " is not a valid value for SubscriptionMatchedStatus current count change." << std::endl;
             }
-
-            reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, &listener_);
-
-            if (reader_ == nullptr)
-            {
-                return false;
-            }
-
-            return true;
         }
 
-        void run() {
-            while (true) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        void on_data_available(DataReader* reader) override
+        {
+            SampleInfo info;
+            if (reader->take_next_sample(&user_message_, &info) == eprosima::fastdds::dds::RETCODE_OK) {
+                if (info.valid_data)
+                {
+                    samples_++;
 
-                if (exit_sub_thread_flag == true) {
-                    break;
+                    if (user_message_.username() != "" && user_message_.message() != "") {
+                        std::cout << user_message_.username() + ": ";
+                        std::cout << user_message_.message() << std::endl;
+                    }
                 }
             }
         }
+
+        UserChat user_message_;
+
+        std::atomic_int samples_;
+    }
+    listener_;
+
+public:
+    UserChatSubscriber(std::string topic_name)
+        : participant_(nullptr)
+        , subscriber_(nullptr)
+        , topic_(nullptr)
+        , reader_(nullptr)
+        , type_(new UserChatPubSubType())
+    {
+        this->topic_name = topic_name;
+        this->is_type_registered = false;
+    }
+
+    virtual ~UserChatSubscriber()
+    {
+        if (reader_ != nullptr)
+        {
+            subscriber_->delete_datareader(reader_);
+        }
+        if (topic_ != nullptr)
+        {
+            participant_->delete_topic(topic_);
+        }
+        if (subscriber_ != nullptr)
+        {
+            participant_->delete_subscriber(subscriber_);
+        }
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
+
+    bool init()
+    {
+        DomainParticipantQos participantQos;
+        participantQos.name("Participant_subscriber");
+
+        participant_ = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
+
+        if (participant_ == nullptr) {
+            return false;
+        }
+
+        /*if (!is_type_registered) {
+            type_.register_type(participant_);
+            is_type_registered = true;
+        }*/
+
+        type_.register_type(participant_);
+
+        // Creates topic named after the user/group Subscriber will look for
+        topic_ = participant_->create_topic(topic_name, "UserChat", TOPIC_QOS_DEFAULT);
+
+        if (topic_ == nullptr) {
+            return false;
+        }
+
+        subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+
+        if (subscriber_ == nullptr)
+        {
+            return false;
+        }
+
+        reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_DEFAULT, &listener_);
+
+        if (reader_ == nullptr)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    void run() {
+        while (true) {
+            if (std::find(endThreadSignal.begin(), endThreadSignal.end(), topic_name) != endThreadSignal.end()) break;
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    }
 };
