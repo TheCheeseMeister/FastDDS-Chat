@@ -21,9 +21,6 @@
 #include <thread>
 #include <atomic>
 
-//std::vector<std::atomic<bool>> endThreadSignals = {};
-//std::vector<char> endThreadSignals = {};
-//std::vector<char> endThreadSignals;
 std::vector<std::string> endThreadSignal = {};
 eprosima::fastdds::dds::TypeSupport test_type(new UserChatPubSubType());
 
@@ -82,11 +79,20 @@ public:
 };
 
 // View users currently added
-void viewUsers(std::vector<std::string>& threaded_usernames) {
+void viewUsers(std::vector<std::string>& threaded_usernames, std::vector<pub_thread>& pubs) {
     std::cout << std::endl << "These are the users you are currently connected to:" << std::endl;
 
+    int i = 0;
     for (std::string& user : threaded_usernames) {
-        std::cout << "  " + user << std::endl;
+        bool curr_status = pubs.at(i).getPub()->getStatus();
+        std::string str = "";
+
+        if (curr_status) str = "online";
+        else str = "offline";
+
+        std::cout << "  " + user + " (" + str + ")" << std::endl;
+
+        i++;
     }
 }
 
@@ -188,7 +194,7 @@ void getCredentials(std::string& username, std::string& password) {
     std::cin.ignore();
 }
 
-void chatUser(std::string username, std::string other_user, std::vector<std::string> threaded_usernames) {
+void chatUser(std::string username, std::string other_user, std::vector<std::string> threaded_usernames, std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs) {
     /*int index = findIndex(threaded_usernames, other_user);
 
     if (index == -1) {
@@ -206,11 +212,21 @@ void chatUser(std::string username, std::string other_user, std::vector<std::str
         std::getline(std::cin, message);
 
         if (message == "/exit") break;
-
-
     }*/
+    int index = findIndex(threaded_usernames, other_user);
 
-    std::cout << "wow" << std::endl;
+    if (index == -1) {
+        std::cout << "Invalid username." << std::endl;
+        return;
+    }
+
+    /*UserChatPublisher* curr_pub = pubs.at(index).getPub();
+    UserChatSubscriber* curr_sub = subs.at(index);*/
+
+    pubs.at(index).getPub()->setActive(true);
+    pubs.at(index).getPub()->setActive(false);
+
+    std::cout << "Cool, works." << std::endl;
 }
 
 int main()
@@ -241,7 +257,7 @@ int main()
 
         if (option == 1) {
             if (!threaded_usernames.empty()) {
-                viewUsers(threaded_usernames);
+                viewUsers(threaded_usernames, pubs);
             }
             else {
                 std::cout << std::endl << "You have no Users added yet." << std::endl;
@@ -257,7 +273,7 @@ int main()
             std::cin >> to_chat;
             std::cin.ignore();
 
-            chatUser(username, to_chat, threaded_usernames);
+            chatUser(username, to_chat, threaded_usernames, pubs, subs);
         }
         else if (option == 4) {
             std::string to_remove = "";

@@ -29,8 +29,6 @@ private:
 
     std::string topic_name;
 
-    bool is_type_registered;
-
     class SubListener : public DataReaderListener
     {
     public:
@@ -86,7 +84,6 @@ public:
         , type_(new UserChatPubSubType())
     {
         this->topic_name = topic_name;
-        this->is_type_registered = false;
     }
 
     virtual ~UserChatSubscriber()
@@ -116,11 +113,6 @@ public:
         if (participant_ == nullptr) {
             return false;
         }
-
-        /*if (!is_type_registered) {
-            type_.register_type(participant_);
-            is_type_registered = true;
-        }*/
 
         type_.register_type(participant_);
 

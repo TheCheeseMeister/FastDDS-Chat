@@ -28,13 +28,15 @@ private:
     TypeSupport type_;
 
     std::string topic_name;
-
     std::atomic<bool> active;
+    std::atomic<bool> status;
 
     class PubListener : public DataWriterListener
     {
+    private:
+        UserChatPublisher* publisher_;
     public:
-        PubListener() : matched_(0) {}
+        PubListener(UserChatPublisher* publisher) : matched_(0), publisher_(publisher) {}
         ~PubListener() override {}
 
         void on_publication_matched(DataWriter*, const PublicationMatchedStatus& info) override {
@@ -42,11 +44,13 @@ private:
             {
                 matched_ = info.total_count;
                 std::cout << "Publisher matched." << std::endl;
+                publisher_->setStatus(true);
             }
             else if (info.current_count_change == -1)
             {
                 matched_ = info.total_count;
                 std::cout << "Publisher unmatched." << std::endl;
+                publisher_->setStatus(false);
             }
             else {
                 std::cout << info.current_count_change << " is not a valid value for PublicationMatchedStatus current count change." << std::endl;
@@ -63,9 +67,11 @@ public:
         , topic_(nullptr)
         , writer_(nullptr)
         , type_(new UserChatPubSubType())
+        , listener_(this)
     {
         this->topic_name = topic_name;
         this->active = false;
+        this->status = false;
     }
 
     virtual ~UserChatPublisher() {
@@ -98,11 +104,6 @@ public:
         {
             return false;
         }
-
-        /*if (!is_type_registered) {
-            type_.register_type(participant_);
-            is_type_registered = true;
-        }*/
 
         type_.register_type(participant_);
 
@@ -141,8 +142,22 @@ public:
         return false;
     }
 
+    // Whether to get input from user or not
     void setActive(bool set) {
-        active = set;
+        active.store(set);
+    }
+
+    bool getActive() {
+        return active.load();
+    }
+
+    // Signals online or offline
+    void setStatus(bool set) {
+        status.store(set);
+    }
+
+    bool getStatus() {
+        return status.load();
     }
 
     void run()
