@@ -7,6 +7,7 @@
 #include <chrono>
 #include <thread>
 #include <string>
+#include <atomic>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -28,7 +29,7 @@ private:
 
     std::string topic_name;
 
-    bool is_type_registered;
+    std::atomic<bool> active;
 
     class PubListener : public DataWriterListener
     {
@@ -64,7 +65,7 @@ public:
         , type_(new UserChatPubSubType())
     {
         this->topic_name = topic_name;
-        this->is_type_registered = false;
+        this->active = false;
     }
 
     virtual ~UserChatPublisher() {
@@ -138,6 +139,10 @@ public:
             return true;
         }
         return false;
+    }
+
+    void setActive(bool set) {
+        active = set;
     }
 
     void run()

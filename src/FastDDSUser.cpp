@@ -28,43 +28,58 @@ std::vector<std::string> endThreadSignal = {};
 eprosima::fastdds::dds::TypeSupport test_type(new UserChatPubSubType());
 
 class sub_thread {
-public:
+private:
+    UserChatSubscriber* user_sub;
+    std::string sub_topic;
+    std::thread st;
 
-    void run(std::string sub_topic) {
-        UserChatSubscriber* user_sub = new UserChatSubscriber(sub_topic);
+public:
+    sub_thread(std::string sub_topic) {
+        this->sub_topic = sub_topic;
+        user_sub = new UserChatSubscriber(sub_topic);
         user_sub->init();
+        st = std::thread(&sub_thread::run, this);
+    }
+
+    void run() {
         user_sub->run();
+    }
+
+    UserChatSubscriber* getSub() {
+        return user_sub;
+    }
+
+    std::thread* getThread() {
+        return &st;
     }
 };
 
 class pub_thread {
-public:
-
-    void run(std::string pub_topic) {
-        UserChatPublisher* user_pub = new UserChatPublisher(pub_topic);
-        user_pub->init();
-        user_pub->run();
-    }
-};
-
-// Test threaded class for figuring out pub/sub dynamics
-/*class threaded_class {
 private:
-    std::string name;
+    UserChatPublisher* user_pub;
+    std::string pub_topic;
+    std::thread pt;
 
 public:
-    void setName(std::string new_name) {
-        this->name = new_name;
-    }
-
-    std::string getName() {
-        return this->name;
+    pub_thread(std::string pub_topic) {
+        this->pub_topic = pub_topic;
+        user_pub = new UserChatPublisher(pub_topic);
+        user_pub->init();
+        pt = std::thread(&pub_thread::run, this);
     }
 
     void run() {
-
+        user_pub->run();
     }
-};*/
+
+    UserChatPublisher* getPub() {
+        return user_pub;
+    }
+
+    std::thread* getThread() {
+        return &pt;
+    }
+};
 
 // View users currently added
 void viewUsers(std::vector<std::string>& threaded_usernames) {
@@ -76,15 +91,12 @@ void viewUsers(std::vector<std::string>& threaded_usernames) {
 }
 
 // Add new user
-void addUser(std::vector<std::vector<std::thread>>& threaded_objs, std::vector<std::string>& threaded_usernames, std::string username) {
+void addUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::vector<std::string>& threaded_usernames, std::string username) {
     std::string new_user = "";
 
     while (true) {
         std::cout << std::endl << "Enter new user: ";
         std::getline(std::cin, new_user);
-
-        //std::cin.clear();
-        //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         if (new_user.find(" ") != std::string::npos) {
             std::cout << "Enter a valid username." << std::endl;
@@ -96,15 +108,12 @@ void addUser(std::vector<std::vector<std::thread>>& threaded_objs, std::vector<s
         }
     }
 
-    //threaded_class test;
-    pub_thread pub;
-    sub_thread sub;
+    pub_thread pub(username + "_" + new_user);
+    sub_thread sub(new_user + "_" + username);
 
-    std::vector<std::thread> temp_threads;
-    temp_threads.emplace_back(&pub_thread::run, &pub, username + "_" + new_user);
-    temp_threads.emplace_back(&sub_thread::run, &sub, new_user + "_" + username);
+    pubs.push_back(std::move(pub));
+    subs.push_back(std::move(sub));
 
-    threaded_objs.push_back(std::move(temp_threads));
     threaded_usernames.push_back(new_user);
 
     std::cout << "Successfully added " + new_user + "." << std::endl;
@@ -123,7 +132,7 @@ int findIndex(std::vector<std::string> vector, std::string search) {
 }
 
 // Remove user
-void removeUser(std::vector<std::vector<std::thread>>& threaded_objs, std::vector<std::string>& threaded_usernames, std::string removed_user, std::string username) {
+void removeUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::vector<std::string>& threaded_usernames, std::string removed_user, std::string username) {
     int index = findIndex(threaded_usernames, removed_user);
 
     if (index == -1) {
@@ -139,15 +148,18 @@ void removeUser(std::vector<std::vector<std::thread>>& threaded_objs, std::vecto
     endThreadSignal.push_back(temp_pub_topic);
     endThreadSignal.push_back(temp_sub_topic);
 
-    for (std::thread& thread : threaded_objs.at(index)) {
-        if (thread.joinable()) {
-            thread.join();
-        }
+    if (pubs.at(index).getThread()->joinable()) {
+        pubs.at(index).getThread()->join();
     }
 
-    endThreadSignal.clear();
+    if (subs.at(index).getThread()->joinable()) {
+        subs.at(index).getThread()->join();
+    }
 
-    threaded_objs.erase(threaded_objs.begin() + index);
+    pubs.erase(pubs.begin() + index);
+    subs.erase(subs.begin() + index);
+
+    endThreadSignal.clear();
 
     std::cout << removed_user + " has been successfully removed." << std::endl;
 }
@@ -176,10 +188,36 @@ void getCredentials(std::string& username, std::string& password) {
     std::cin.ignore();
 }
 
+void chatUser(std::string username, std::string other_user, std::vector<std::string> threaded_usernames) {
+    /*int index = findIndex(threaded_usernames, other_user);
+
+    if (index == -1) {
+        std::cout << "Invalid username." << std::endl;
+        return;
+    }
+
+    std::vector<std::thread> curr_set = pub_subs.at(index).at(0);
+
+    std::cout << "Chat to the user here!" << std::endl;
+
+    while (true) {
+        std::string message = "";
+
+        std::getline(std::cin, message);
+
+        if (message == "/exit") break;
+
+
+    }*/
+
+    std::cout << "wow" << std::endl;
+}
+
 int main()
 {
-    //std::vector<std::thread> threaded_objs = {};
-    std::vector<std::vector<std::thread>> threaded_objs = {};
+    std::vector<pub_thread> pubs = {};
+    std::vector<sub_thread> subs = {};
+
     std::vector<std::string> threaded_usernames = {};
 
     std::string username = "";
@@ -209,9 +247,17 @@ int main()
                 std::cout << std::endl << "You have no Users added yet." << std::endl;
             }
         }
-        //else if (option == 2) threaded_objs.push_back(addUser(threaded_objs, threaded_usernames));
         else if (option == 2) {
-            addUser(threaded_objs, threaded_usernames, username);
+            addUser(pubs, subs, threaded_usernames, username);
+        }
+        else if (option == 3) {
+            std::string to_chat = "";
+
+            std::cout << std::endl << "What user would you like to chat to: ";
+            std::cin >> to_chat;
+            std::cin.ignore();
+
+            chatUser(username, to_chat, threaded_usernames);
         }
         else if (option == 4) {
             std::string to_remove = "";
@@ -220,7 +266,7 @@ int main()
             std::cin >> to_remove;
             std::cin.ignore();
 
-            removeUser(threaded_objs, threaded_usernames, to_remove, username);
+            removeUser(pubs, subs, threaded_usernames, to_remove, username);
         }
         else if (option == 5) break;
         else {
@@ -229,8 +275,7 @@ int main()
     }
 
     // Clean up threads
-    int i = 0;
-    for (std::vector<std::thread>& vector : threaded_objs) {
+    for (int i = 0; i < pubs.size(); i++) {
         std::string removed_user = threaded_usernames.at(i);
 
         std::string temp_pub_topic = username + "_" + removed_user;
@@ -239,12 +284,8 @@ int main()
         endThreadSignal.push_back(temp_pub_topic);
         endThreadSignal.push_back(temp_sub_topic);
 
-        for (std::thread& thread : vector) {
-            thread.join();
-        }
-        endThreadSignal.clear();
-
-        i++;
+        pubs.at(i).getThread()->join();
+        subs.at(i).getThread()->join();
     }
 
     std::cout << std::endl << "Thanks for chatting." << std::endl;
