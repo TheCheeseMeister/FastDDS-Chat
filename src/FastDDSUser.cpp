@@ -14,7 +14,7 @@
 
 #include "UserChatPublisher.hpp"
 #include "UserChatSubscriber.hpp"
-#include "EndThreadSignal.hpp"
+#include "Globals.hpp"
 
 #include <iostream>
 #include <vector>
@@ -22,18 +22,19 @@
 #include <atomic>
 
 std::vector<std::string> endThreadSignal = {};
-eprosima::fastdds::dds::TypeSupport test_type(new UserChatPubSubType());
+std::vector<std::string> curr_chat_tab = {};
 
 class sub_thread {
 private:
     UserChatSubscriber* user_sub;
     std::string sub_topic;
     std::thread st;
+    std::vector<std::string>* curr_history;
 
 public:
-    sub_thread(std::string sub_topic) {
+    sub_thread(std::string sub_topic, std::vector<std::string>& history) : curr_history(&history) {
         this->sub_topic = sub_topic;
-        user_sub = new UserChatSubscriber(sub_topic);
+        user_sub = new UserChatSubscriber(sub_topic, curr_history);
         user_sub->init();
         st = std::thread(&sub_thread::run, this);
     }
@@ -49,6 +50,10 @@ public:
     std::thread* getThread() {
         return &st;
     }
+
+    std::vector<std::string>* getHistory() {
+        return curr_history;
+    }
 };
 
 class pub_thread {
@@ -56,11 +61,12 @@ private:
     UserChatPublisher* user_pub;
     std::string pub_topic;
     std::thread pt;
+    std::vector<std::string>* curr_history;
 
 public:
-    pub_thread(std::string pub_topic) {
+    pub_thread(std::string pub_topic, std::string name, std::vector<std::string>& history) : curr_history(&history) {
         this->pub_topic = pub_topic;
-        user_pub = new UserChatPublisher(pub_topic);
+        user_pub = new UserChatPublisher(pub_topic, name, curr_history);
         user_pub->init();
         pt = std::thread(&pub_thread::run, this);
     }
@@ -76,7 +82,23 @@ public:
     std::thread* getThread() {
         return &pt;
     }
+
+    std::vector<std::string>* getHistory() {
+        return curr_history;
+    }
 };
+
+// Find index of element in vector
+int findIndex(std::vector<std::string> vector, std::string search) {
+    auto f = std::find(vector.begin(), vector.end(), search);
+
+    if (f != vector.end()) {
+        return f - vector.begin();
+    }
+    else {
+        return -1;
+    }
+}
 
 // View users currently added
 void viewUsers(std::vector<std::string>& threaded_usernames, std::vector<pub_thread>& pubs) {
@@ -97,7 +119,7 @@ void viewUsers(std::vector<std::string>& threaded_usernames, std::vector<pub_thr
 }
 
 // Add new user
-void addUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::vector<std::string>& threaded_usernames, std::string username) {
+void addUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::vector<std::string>& threaded_usernames, std::string username, std::vector<std::vector<std::string>>& chat_histories) {
     std::string new_user = "";
 
     while (true) {
@@ -110,12 +132,23 @@ void addUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::
             new_user = "";
         }
         else {
-            break;
+            if (new_user == username) {
+                std::cout << "You can't add yourself. Try again." << std::endl;
+            }
+            else if (findIndex(threaded_usernames, new_user) != -1) {
+                std::cout << "You can't add a user you already added." << std::endl;
+            }
+            else {
+                break;
+            }
         }
     }
 
-    pub_thread pub(username + "_" + new_user);
-    sub_thread sub(new_user + "_" + username);
+    std::vector<std::string> temp_history = {};
+    chat_histories.push_back(temp_history);
+
+    pub_thread pub(username + "_" + new_user, username, chat_histories.at(chat_histories.size()-1));
+    sub_thread sub(new_user + "_" + username, chat_histories.at(chat_histories.size() - 1));
 
     pubs.push_back(std::move(pub));
     subs.push_back(std::move(sub));
@@ -125,20 +158,8 @@ void addUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::
     std::cout << "Successfully added " + new_user + "." << std::endl;
 }
 
-// Find index of element in vector
-int findIndex(std::vector<std::string> vector, std::string search) {
-    auto f = std::find(vector.begin(), vector.end(), search);
-
-    if (f != vector.end()) {
-        return f - vector.begin();
-    }
-    else {
-        return -1;
-    }
-}
-
 // Remove user
-void removeUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::vector<std::string>& threaded_usernames, std::string removed_user, std::string username) {
+void removeUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::vector<std::string>& threaded_usernames, std::string removed_user, std::string username, std::vector<std::vector<std::string>>& chat_histories) {
     int index = findIndex(threaded_usernames, removed_user);
 
     if (index == -1) {
@@ -162,8 +183,13 @@ void removeUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, st
         subs.at(index).getThread()->join();
     }
 
+    delete pubs.at(index).getPub();
+    delete subs.at(index).getSub();
+
     pubs.erase(pubs.begin() + index);
     subs.erase(subs.begin() + index);
+
+    chat_histories.erase(chat_histories.begin() + index);
 
     endThreadSignal.clear();
 
@@ -194,25 +220,7 @@ void getCredentials(std::string& username, std::string& password) {
     std::cin.ignore();
 }
 
-void chatUser(std::string username, std::string other_user, std::vector<std::string> threaded_usernames, std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs) {
-    /*int index = findIndex(threaded_usernames, other_user);
-
-    if (index == -1) {
-        std::cout << "Invalid username." << std::endl;
-        return;
-    }
-
-    std::vector<std::thread> curr_set = pub_subs.at(index).at(0);
-
-    std::cout << "Chat to the user here!" << std::endl;
-
-    while (true) {
-        std::string message = "";
-
-        std::getline(std::cin, message);
-
-        if (message == "/exit") break;
-    }*/
+void chatUser(std::string username, std::string other_user, std::vector<std::string> threaded_usernames, std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::vector<std::vector<std::string>>& chat_histories) {
     int index = findIndex(threaded_usernames, other_user);
 
     if (index == -1) {
@@ -220,19 +228,43 @@ void chatUser(std::string username, std::string other_user, std::vector<std::str
         return;
     }
 
-    /*UserChatPublisher* curr_pub = pubs.at(index).getPub();
-    UserChatSubscriber* curr_sub = subs.at(index);*/
+    std::cout << std::endl << "Here's your current history with " + other_user + ":" << std::endl;
 
+    std::vector<std::string>* temp_history = pubs.at(index).getHistory();
+
+    if (!temp_history->empty()) {
+        for (std::string& str : *temp_history) {
+            std::cout << str << std::endl;
+        }
+    }
+    else {
+        std::cout << "This is the start of your history with " + other_user + "." << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    // setActive(true), in Publisher add ability to send message while active = true
+    // while (getActive() == true) {} in main to pause operations until pub is complete (/exit)
+    curr_chat_tab.at(0) = "in";
+    curr_chat_tab.at(1) = other_user + "_" + username;
     pubs.at(index).getPub()->setActive(true);
-    pubs.at(index).getPub()->setActive(false);
+    while (pubs.at(index).getPub()->getActive() == true) {
+    }
 
-    std::cout << "Cool, works." << std::endl;
+    curr_chat_tab.at(0) = "";
+    curr_chat_tab.at(1) = "";
+
+    std::cout << "Leaving chat with " + other_user + "." << std::endl;
 }
 
 int main()
 {
+    curr_chat_tab.push_back("");
+    curr_chat_tab.push_back("");
+
     std::vector<pub_thread> pubs = {};
     std::vector<sub_thread> subs = {};
+    std::vector<std::vector<std::string>> chat_histories = {};
 
     std::vector<std::string> threaded_usernames = {};
 
@@ -252,8 +284,18 @@ int main()
         int option = -1;
         printHomeMenu();
 
-        std::cin >> option;
-        std::cin.ignore();
+        while (true) {
+            std::cin >> option;
+
+            if (std::cin.fail()) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Invalid input. Please try again: ";
+            }
+            else {
+                break;
+            }
+        }
 
         if (option == 1) {
             if (!threaded_usernames.empty()) {
@@ -264,7 +306,7 @@ int main()
             }
         }
         else if (option == 2) {
-            addUser(pubs, subs, threaded_usernames, username);
+            addUser(pubs, subs, threaded_usernames, username, chat_histories);
         }
         else if (option == 3) {
             std::string to_chat = "";
@@ -273,7 +315,12 @@ int main()
             std::cin >> to_chat;
             std::cin.ignore();
 
-            chatUser(username, to_chat, threaded_usernames, pubs, subs);
+            if (to_chat == username) {
+                std::cout << "Invalid username: can't talk to yourself." << std::endl;
+            }
+            else {
+                chatUser(username, to_chat, threaded_usernames, pubs, subs, chat_histories);
+            }
         }
         else if (option == 4) {
             std::string to_remove = "";
@@ -282,7 +329,7 @@ int main()
             std::cin >> to_remove;
             std::cin.ignore();
 
-            removeUser(pubs, subs, threaded_usernames, to_remove, username);
+            removeUser(pubs, subs, threaded_usernames, to_remove, username, chat_histories);
         }
         else if (option == 5) break;
         else {

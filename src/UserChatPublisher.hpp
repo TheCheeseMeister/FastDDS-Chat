@@ -3,7 +3,7 @@
  */
 
 #include "UserChatPubSubTypes.hpp";
-#include "EndThreadSignal.hpp"
+#include "Globals.hpp"
 #include <chrono>
 #include <thread>
 #include <string>
@@ -27,9 +27,12 @@ private:
     DataWriter* writer_;
     TypeSupport type_;
 
+    std::atomic<bool> active;           // Whether Publisher is accepting input
+    std::atomic<bool> status;           // Whether Publisher is online or not (matched with subscriber)
+    std::vector<std::string>* history;  // Ongoing history of chat
+
+    std::string username;
     std::string topic_name;
-    std::atomic<bool> active;
-    std::atomic<bool> status;
 
     class PubListener : public DataWriterListener
     {
@@ -61,17 +64,19 @@ private:
     } listener_;
 
 public:
-    UserChatPublisher(std::string topic_name)
+    UserChatPublisher(std::string topic_name, std::string name, std::vector<std::string>* curr_history)
         : participant_(nullptr)
         , publisher_(nullptr)
         , topic_(nullptr)
         , writer_(nullptr)
         , type_(new UserChatPubSubType())
         , listener_(this)
+        , history(curr_history)
     {
         this->topic_name = topic_name;
         this->active = false;
         this->status = false;
+        this->username = name;
     }
 
     virtual ~UserChatPublisher() {
@@ -93,7 +98,7 @@ public:
     bool init()
     {
         user_message_.index(0);
-        user_message_.username(topic_name);
+        user_message_.username(username);
 
         DomainParticipantQos participantQos;
         participantQos.name("Participant_publisher");
@@ -167,21 +172,32 @@ public:
         {
             if (std::find(endThreadSignal.begin(), endThreadSignal.end(), topic_name) != endThreadSignal.end()) break;
 
-            if (publish())
-            {
-                /*std::string message = "";
-                std::string exit = "/exit";
-                std::getline(std::cin, message, '\n');*/
+            if (getActive()) {
+                if (!getStatus()) {
+                    std::cout << std::endl << "Other user is offline now. Last message discarded. Press any key to go back to main ui...";
+                    getchar();
 
-                // quit on /exit
-                /*if (message == exit) {
-                    break;
+                    setActive(false);
                 }
+                else if (publish())
+                {
+                    std::string message = "";
+                    std::string exit = "/exit";
 
-                user_message_.message(message);
+                    std::getline(std::cin, message, '\n');
 
-                samples_sent++;*/
-                //std::cout << user_message_.username() << ": " << user_message_.message() << std::endl;
+                    if (message == exit) {
+                        setActive(false);
+
+                        message = "";
+                    }
+                    else if (getStatus()){
+                        user_message_.message(message);
+
+                        std::string str = user_message_.username() + ": " + message;
+                        history->push_back(str);
+                    }
+                }
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));

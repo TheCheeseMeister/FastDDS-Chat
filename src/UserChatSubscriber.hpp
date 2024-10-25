@@ -3,7 +3,7 @@
  */
 
 #include "UserChatPubSubTypes.hpp";
-#include "EndThreadSignal.hpp"
+#include "Globals.hpp"
 #include <chrono>
 #include <thread>
 
@@ -28,25 +28,24 @@ private:
     TypeSupport type_;
 
     std::string topic_name;
+    std::vector<std::string>* history;  // Ongoing history of chat
 
     class SubListener : public DataReaderListener
     {
+    private:
+        UserChatSubscriber* subscriber_;
+        std::string last_received_message;
     public:
-        SubListener() : samples_(0)
-        {
-        }
-
-        ~SubListener() override
-        {
-        }
+        SubListener(UserChatSubscriber* subscriber) : samples_(0), subscriber_(subscriber) { last_received_message = ""; }
+        ~SubListener() override {}
 
         void on_subscription_matched(DataReader*, const SubscriptionMatchedStatus& info) override
         {
             if (info.current_count_change == 1) {
-                std::cout << "Subscriber matched." << std::endl;
+                //std::cout << "Subscriber matched." << std::endl;
             }
             else if (info.current_count_change == -1) {
-                std::cout << "Subscriber unmatched." << std::endl;
+                //std::cout << "Subscriber unmatched." << std::endl;
             }
             else {
                 std::cout << info.current_count_change << " is not a valid value for SubscriptionMatchedStatus current count change." << std::endl;
@@ -62,8 +61,27 @@ private:
                     samples_++;
 
                     if (user_message_.username() != "" && user_message_.message() != "") {
-                        std::cout << user_message_.username() + ": ";
-                        std::cout << user_message_.message() << std::endl;
+                        std::string str = user_message_.username() + ": " + user_message_.message();
+                        std::vector<std::string>* curr_history = subscriber_->getHistory();
+
+                        if (last_received_message == "") {
+                            if (curr_chat_tab.at(0) == "in" && curr_chat_tab.at(1) == subscriber_->getTopicName()) {
+                                std::cout << user_message_.username() + ": ";
+                                std::cout << user_message_.message() << std::endl;
+                            }
+
+                            curr_history->push_back(str);
+                            last_received_message = str;
+                        }
+                        else if (last_received_message != str) {
+                            if (curr_chat_tab.at(0) == "in" && curr_chat_tab.at(1) == subscriber_->getTopicName()) {
+                                std::cout << user_message_.username() + ": ";
+                                std::cout << user_message_.message() << std::endl;
+                            }
+
+                            curr_history->push_back(str);
+                            last_received_message = str;
+                        }
                     }
                 }
             }
@@ -76,12 +94,14 @@ private:
     listener_;
 
 public:
-    UserChatSubscriber(std::string topic_name)
+    UserChatSubscriber(std::string topic_name, std::vector<std::string>* curr_history)
         : participant_(nullptr)
         , subscriber_(nullptr)
         , topic_(nullptr)
         , reader_(nullptr)
         , type_(new UserChatPubSubType())
+        , listener_(this)
+        , history(curr_history)
     {
         this->topic_name = topic_name;
     }
@@ -138,6 +158,14 @@ public:
         }
 
         return true;
+    }
+
+    std::string getTopicName() {
+        return topic_name;
+    }
+
+    std::vector<std::string>* getHistory() {
+        return history;
     }
 
     void run() {
