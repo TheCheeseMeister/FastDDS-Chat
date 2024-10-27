@@ -1,17 +1,6 @@
 // FastDDSUser.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-// TODO: - DONE Split threaded_class into two different classes (one for publisher, one for subscriber)
-//       - DONE Change threaded_objs to std::vector<std::vector<std::thread>> (pub/sub pairings will be stored in one space)
-//       - Replace placeholder thread functions with publisher and subscriber functions
-//       - Create history storage (std::vector<std::vector<std::string>>) that stores the history for each conversation (updates even when not tabbed in if a message is received)
-//       - Implement option 3 so user can open chat with specific user and send/see received messages (/exit is now for exiting current conversations)
-//       - Add storage for user logins and whatnot (I'm going to assume the pub/sub stuff will work by now)
-//       - Cry about having to add customization
-//       - ???
-//       - Profit...?
-//
-
 #include "UserChatPublisher.hpp"
 #include "UserChatSubscriber.hpp"
 #include "Globals.hpp"
@@ -21,9 +10,10 @@
 #include <thread>
 #include <atomic>
 
-std::vector<std::string> endThreadSignal = {};
-std::vector<std::string> curr_chat_tab = {};
+std::vector<std::string> endThreadSignal = {};  // Lets threads know to end
+std::vector<std::string> curr_chat_tab = {};    // Tells which tabbed user is currently being talked to (option 3)
 
+// Class for representing a Subscriber
 class sub_thread {
 private:
     UserChatSubscriber* user_sub;
@@ -56,6 +46,7 @@ public:
     }
 };
 
+// Class for representing a Publisher
 class pub_thread {
 private:
     UserChatPublisher* user_pub;
@@ -243,11 +234,9 @@ void chatUser(std::string username, std::string other_user, std::vector<std::str
 
     std::cout << std::endl;
 
-    // setActive(true), in Publisher add ability to send message while active = true
-    // while (getActive() == true) {} in main to pause operations until pub is complete (/exit)
     curr_chat_tab.at(0) = "in";
     curr_chat_tab.at(1) = other_user + "_" + username;
-    pubs.at(index).getPub()->setActive(true);
+    pubs.at(index).getPub()->setActive(true);   // Allows typing messages in Publisher
     while (pubs.at(index).getPub()->getActive() == true) {
     }
 
