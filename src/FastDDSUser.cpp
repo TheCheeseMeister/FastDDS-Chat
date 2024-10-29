@@ -10,6 +10,32 @@
 #include <thread>
 #include <atomic>
 
+// For colors
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#include <cstdio>
+#endif
+
+void setTextColor(Color color) {
+#ifdef _WIN32
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, static_cast<int>(color));
+#else
+    std::cout << "\033[" << static_cast<int>(color) << "m";
+#endif
+}
+
+void resetTextColor() {
+#ifdef _WIN32
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 7);
+#else
+    std::cout << "\033[0m";
+#endif
+}
+
 std::vector<std::string> endThreadSignal = {};  // Lets threads know to end
 std::vector<std::string> curr_chat_tab = {};    // Tells which tabbed user is currently being talked to (option 3)
 
@@ -194,7 +220,8 @@ void printHomeMenu() {
     std::cout << "  2. Add a new user." << std::endl;
     std::cout << "  3. Chat with a user." << std::endl;
     std::cout << "  4. Remove a user." << std::endl;
-    std::cout << "  5. Exit the program." << std::endl << std::endl;
+    std::cout << "  5. Change color of text." << std::endl;
+    std::cout << "  6. Exit the program." << std::endl << std::endl;
 }
 
 // Get login info
@@ -246,6 +273,75 @@ void chatUser(std::string username, std::string other_user, std::vector<std::str
     std::cout << "Leaving chat with " + other_user + "." << std::endl;
 }
 
+void changeColor() {
+    std::cout << std::endl << "Which color would you like to choose?" << std::endl;
+
+    setTextColor(Color::DEFAULT_WHITE);
+    std::cout << "  1. Default White" << std::endl;
+    //setTextColor(Color::BLACK);
+    //std::cout << "  2. Black" << std::endl;
+    setTextColor(Color::BLUE);
+    std::cout << "  2. Blue" << std::endl;
+    setTextColor(Color::GREEN);
+    std::cout << "  3. Green" << std::endl;
+    setTextColor(Color::CYAN);
+    std::cout << "  4. Cyan" << std::endl;
+    setTextColor(Color::RED);
+    std::cout << "  5. Red" << std::endl;
+    setTextColor(Color::MAGENTA);
+    std::cout << "  6. Magenta" << std::endl;
+    setTextColor(Color::YELLOW);
+    std::cout << "  7. Yellow" << std::endl;
+    setTextColor(Color::WHITE);
+    std::cout << "  8. White" << std::endl;
+
+    resetTextColor();
+
+    int option = 0;
+    std::cout << std::endl << "Select an option: ";
+    std::cin >> option;
+    std::cin.ignore();
+
+    std::cout << std::endl;
+
+    switch (option) {
+    case 1:
+        setTextColor(Color::DEFAULT_WHITE);
+        std::cout << "You're display is now set to Default White" << std::endl;
+        break;
+    case 2:
+        setTextColor(Color::BLUE);
+        std::cout << "You're display is now set to Blue" << std::endl;
+        break;
+    case 3:
+        setTextColor(Color::GREEN);
+        std::cout << "You're display is now set to Green" << std::endl;
+        break;
+    case 4:
+        setTextColor(Color::CYAN);
+        std::cout << "You're display is now set to Cyan" << std::endl;
+        break;
+    case 5:
+        setTextColor(Color::RED);
+        std::cout << "You're display is now set to Red" << std::endl;
+        break;
+    case 6:
+        setTextColor(Color::MAGENTA);
+        std::cout << "You're display is now set to Magenta" << std::endl;
+        break;
+    case 7:
+        setTextColor(Color::YELLOW);
+        std::cout << "You're display is now set to Yellow" << std::endl;
+        break;
+    case 8:
+        setTextColor(Color::WHITE);
+        std::cout << "You're display is now set to White" << std::endl;
+        break;
+    default:
+        std::cout << "That's not a color." << std::endl;
+    }
+}
+
 int main()
 {
     curr_chat_tab.push_back("");
@@ -278,7 +374,7 @@ int main()
 
             if (std::cin.fail()) {
                 std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 std::cout << "Invalid input. Please try again: ";
             }
             else {
@@ -320,7 +416,8 @@ int main()
 
             removeUser(pubs, subs, threaded_usernames, to_remove, username, chat_histories);
         }
-        else if (option == 5) break;
+        else if (option == 5) changeColor();
+        else if (option == 6) break;
         else {
             std::cout << std::endl << "That's not an option. Try again. (1-5)" << std::endl;
         }
@@ -341,4 +438,6 @@ int main()
     }
 
     std::cout << std::endl << "Thanks for chatting." << std::endl;
+
+    resetTextColor();
 }

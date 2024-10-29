@@ -2,6 +2,18 @@ cmake_minimum_required(VERSION 3.20)
 
 project(FastDDSChat)
 
+# Windows
+set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL-Win64/")
+set(OPENSSL_INCLUDE_DIR "C:/Program Files/OpenSSL-Win64/include")
+set(OPENSSL_LIBRARIES "C:/Program Files/OpenSSL-Win64/lib")
+
+#set(OPENSSL_ROOT_DIR "/usr")
+#set(OPENSSL_INCLUDE_DIR "/usr/include/openssl")
+#set(OPENSSL_CRYPTO_LIBRARY "/usr/bin/openssl")
+#set(OPENSSL_LIBRARIES "/usr/lib/x86_64-linux-gnu/libssl.so;/usr/lib/x86_64-linux-gnu/libcrypto.so")
+
+find_package(OpenSSL REQUIRED)
+
 # Find Requirements
 if (NOT fastcdr_FOUND)
     find_package(fastcdr 2 REQUIRED)
@@ -23,6 +35,9 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID
     endif()
 endif()
 
+#find_package(OPENSSL REQUIRED)
+#include_directories(${OPENSSL_INCLUDE_DIR})
+
 message(STATUS "Configuring FastDDS Chat...")
 file(GLOB FASTDDS_CHAT_SOURCES_CXX "src/*.cxx")
 
@@ -33,4 +48,4 @@ file(GLOB FASTDDS_CHAT_SOURCES_CXX "src/*.cxx")
 #target_link_libraries(DDSHelloWorldSubscriber fastdds fastcdr)
 
 add_executable(FastDDSUser src/FastDDSUser.cpp ${FASTDDS_CHAT_SOURCES_CXX})
-target_link_libraries(FastDDSUser fastdds fastcdr)
+target_link_libraries(FastDDSUser fastdds fastcdr OpenSSL::SSL OpenSSL::Crypto)
