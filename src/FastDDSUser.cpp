@@ -46,11 +46,13 @@ private:
     std::string sub_topic;
     std::thread st;
     std::vector<std::string>* curr_history;
+    std::vector<std::string>* end_signal;
+    std::vector<std::string>* curr_tab;
 
 public:
-    sub_thread(std::string sub_topic, std::vector<std::string>& history) : curr_history(&history) {
+    sub_thread(std::string sub_topic, std::vector<std::string>& history, std::vector<std::string>& signal, std::vector<std::string>& tab) : curr_history(&history), end_signal(&signal), curr_tab(&tab) {
         this->sub_topic = sub_topic;
-        user_sub = new UserChatSubscriber(sub_topic, curr_history);
+        user_sub = new UserChatSubscriber(sub_topic, curr_history, end_signal, curr_tab);
         user_sub->init();
         st = std::thread(&sub_thread::run, this);
     }
@@ -79,11 +81,12 @@ private:
     std::string pub_topic;
     std::thread pt;
     std::vector<std::string>* curr_history;
+    std::vector<std::string>* end_signal;
 
 public:
-    pub_thread(std::string pub_topic, std::string name, std::vector<std::string>& history) : curr_history(&history) {
+    pub_thread(std::string pub_topic, std::string name, std::vector<std::string>& history, std::vector<std::string>& signal) : curr_history(&history), end_signal(&signal) {
         this->pub_topic = pub_topic;
-        user_pub = new UserChatPublisher(pub_topic, name, curr_history);
+        user_pub = new UserChatPublisher(pub_topic, name, curr_history, end_signal);
         user_pub->init();
         pt = std::thread(&pub_thread::run, this);
     }
@@ -164,8 +167,8 @@ void addUser(std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::
     std::vector<std::string> temp_history = {};
     chat_histories.push_back(temp_history);
 
-    pub_thread pub(username + "_" + new_user, username, chat_histories.at(chat_histories.size()-1));
-    sub_thread sub(new_user + "_" + username, chat_histories.at(chat_histories.size() - 1));
+    pub_thread pub(username + "_" + new_user, username, chat_histories.at(chat_histories.size()-1), endThreadSignal);
+    sub_thread sub(new_user + "_" + username, chat_histories.at(chat_histories.size() - 1), endThreadSignal, curr_chat_tab);
 
     pubs.push_back(std::move(pub));
     subs.push_back(std::move(sub));

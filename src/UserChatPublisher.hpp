@@ -3,7 +3,7 @@
  */
 
 #include "UserChatPubSubTypes.hpp";
-#include "Globals.hpp"
+//#include "Globals.hpp"
 #include <chrono>
 #include <thread>
 #include <string>
@@ -30,6 +30,7 @@ private:
     std::atomic<bool> active;           // Whether Publisher is accepting input
     std::atomic<bool> status;           // Whether Publisher is online or not (matched with subscriber)
     std::vector<std::string>* history;  // Ongoing history of chat
+    std::vector<std::string>* end_signal; // Tells thread to end
 
     std::string username;
     std::string topic_name;
@@ -64,7 +65,7 @@ private:
     } listener_;
 
 public:
-    UserChatPublisher(std::string topic_name, std::string name, std::vector<std::string>* curr_history)
+    UserChatPublisher(std::string topic_name, std::string name, std::vector<std::string>* curr_history, std::vector<std::string>* signal)
         : participant_(nullptr)
         , publisher_(nullptr)
         , topic_(nullptr)
@@ -72,6 +73,7 @@ public:
         , type_(new UserChatPubSubType())
         , listener_(this)
         , history(curr_history)
+        , end_signal(signal)
     {
         this->topic_name = topic_name;
         this->active = false;
@@ -170,7 +172,8 @@ public:
         uint32_t samples_sent = 0;
         while (true)
         {
-            if (std::find(endThreadSignal.begin(), endThreadSignal.end(), topic_name) != endThreadSignal.end()) break;
+            //if (std::find(endThreadSignal.begin(), endThreadSignal.end(), topic_name) != endThreadSignal.end()) break;
+            if (std::find(end_signal->begin(), end_signal->end(), topic_name) != end_signal->end()) break;
 
             if (getActive()) {
                 if (!getStatus()) {

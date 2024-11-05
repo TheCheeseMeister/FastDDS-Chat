@@ -3,7 +3,7 @@
  */
 
 #include "UserChatPubSubTypes.hpp";
-#include "Globals.hpp"
+//#include "Globals.hpp"
 #include <chrono>
 #include <thread>
 
@@ -29,6 +29,8 @@ private:
 
     std::string topic_name;
     std::vector<std::string>* history;  // Ongoing history of chat
+    std::vector<std::string>* end_signal; // Tells thread to end
+    std::vector<std::string>* curr_tab; // Tells subscriber if user is tabbed into chat to output messages
 
     class SubListener : public DataReaderListener
     {
@@ -63,9 +65,10 @@ private:
                     if (user_message_.username() != "" && user_message_.message() != "") {
                         std::string str = user_message_.username() + ": " + user_message_.message();
                         std::vector<std::string>* curr_history = subscriber_->getHistory();
+                        std::vector<std::string>* curr_tab = subscriber_->getCurrTab();
 
                         if (last_received_message == "") {
-                            if (curr_chat_tab.at(0) == "in" && curr_chat_tab.at(1) == subscriber_->getTopicName()) {
+                            if (curr_tab->at(0) == "in" && curr_tab->at(1) == subscriber_->getTopicName()) {
                                 std::cout << user_message_.username() + ": ";
                                 std::cout << user_message_.message() << std::endl;
                             }
@@ -74,7 +77,7 @@ private:
                             last_received_message = str;
                         }
                         else if (last_received_message != str) {
-                            if (curr_chat_tab.at(0) == "in" && curr_chat_tab.at(1) == subscriber_->getTopicName()) {
+                            if (curr_tab->at(0) == "in" && curr_tab->at(1) == subscriber_->getTopicName()) {
                                 std::cout << user_message_.username() + ": ";
                                 std::cout << user_message_.message() << std::endl;
                             }
@@ -94,7 +97,7 @@ private:
     listener_;
 
 public:
-    UserChatSubscriber(std::string topic_name, std::vector<std::string>* curr_history)
+    UserChatSubscriber(std::string topic_name, std::vector<std::string>* curr_history, std::vector<std::string>* signal, std::vector<std::string>* tab)
         : participant_(nullptr)
         , subscriber_(nullptr)
         , topic_(nullptr)
@@ -102,6 +105,8 @@ public:
         , type_(new UserChatPubSubType())
         , listener_(this)
         , history(curr_history)
+        , end_signal(signal)
+        , curr_tab(tab)
     {
         this->topic_name = topic_name;
     }
@@ -168,9 +173,14 @@ public:
         return history;
     }
 
+    std::vector<std::string>* getCurrTab() {
+        return curr_tab;
+    }
+
     void run() {
         while (true) {
-            if (std::find(endThreadSignal.begin(), endThreadSignal.end(), topic_name) != endThreadSignal.end()) break;
+            //if (std::find(endThreadSignal.begin(), endThreadSignal.end(), topic_name) != endThreadSignal.end()) break;
+            if (std::find(end_signal->begin(), end_signal->end(), topic_name) != end_signal->end()) break;
 
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
