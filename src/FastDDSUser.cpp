@@ -228,17 +228,13 @@ void printHomeMenu() {
 }
 
 // Get login info
-void getCredentials(std::string& username, std::string& password) {
+void getCredentials(std::string& username) {
     std::cout << "Please enter your login info below:" << std::endl << std::endl;
 
     std::cout << "Username: ";
     std::cin >> username;
     std::cin.ignore();
-
-    std::cout << "Password: ";
-    std::cin >> password;
     std::cout << std::endl;
-    std::cin.ignore();
 }
 
 void chatUser(std::string username, std::string other_user, std::vector<std::string> threaded_usernames, std::vector<pub_thread>& pubs, std::vector<sub_thread>& subs, std::vector<std::vector<std::string>>& chat_histories) {
@@ -357,16 +353,15 @@ int main()
     std::vector<std::string> threaded_usernames = {};
 
     std::string username = "";
-    std::string password = "";
 
     std::cout << "Fast-DDS Chat" << std::endl;
     std::cout << "----------------------------" << std::endl;
 
-    getCredentials(username, password);
+    getCredentials(username);
 
     std::cout << "----------------------------" << std::endl << std::endl;
 
-    std::cout << "Welcome, " + username + ". Your password is " + password + "." << std::endl;
+    std::cout << "Welcome, " + username + "." << std::endl;
 
     while (true) {
         int option = -1;
@@ -384,6 +379,8 @@ int main()
                 break;
             }
         }
+
+        std::cin.ignore();
 
         if (option == 1) {
             if (!threaded_usernames.empty()) {
