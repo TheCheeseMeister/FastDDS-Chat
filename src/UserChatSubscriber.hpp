@@ -16,6 +16,8 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
+
 using namespace eprosima::fastdds::dds;
 
 class UserChatSubscriber

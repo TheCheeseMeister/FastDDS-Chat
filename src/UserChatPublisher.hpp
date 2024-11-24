@@ -16,6 +16,8 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
+
 using namespace eprosima::fastdds::dds;
 
 class UserChatPublisher {
@@ -47,13 +49,13 @@ private:
             if (info.current_count_change == 1)
             {
                 matched_ = info.total_count;
-                //std::cout << "Publisher matched." << std::endl;
+                std::cout << "Publisher matched." << std::endl;
                 publisher_->setStatus(true);
             }
             else if (info.current_count_change == -1)
             {
                 matched_ = info.total_count;
-                //std::cout << "Publisher unmatched." << std::endl;
+                std::cout << "Publisher unmatched." << std::endl;
                 publisher_->setStatus(false);
             }
             else {
@@ -104,6 +106,13 @@ public:
 
         DomainParticipantQos participantQos;
         participantQos.name("Participant_publisher");
+
+        // Change IP to whatever device you're connecting to - Comment out for local debugging.
+        // * Adding parsing of text file for multiple ips
+        eprosima::fastdds::rtps::Locator_t locator;
+        eprosima::fastdds::rtps::IPLocator::setIPv4(locator, "10.0.0.185");
+        locator.port = 7412;
+        participantQos.wire_protocol().builtin.initialPeersList.push_back(locator);
 
         participant_ = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
 
