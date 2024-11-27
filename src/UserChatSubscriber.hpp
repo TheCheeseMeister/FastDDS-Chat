@@ -6,6 +6,7 @@
 //#include "Globals.hpp"
 #include <chrono>
 #include <thread>
+#include <ctime>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -65,13 +66,19 @@ private:
                     samples_++;
 
                     if (user_message_.username() != "" && user_message_.message() != "") {
-                        std::string str = user_message_.username() + ": " + user_message_.message();
+                        auto now = std::chrono::system_clock::now();
+                        std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+                        std::tm local_time = *std::localtime(&now_time);
+                        std::string timestamp = std::asctime(&local_time);
+                        timestamp.pop_back(); // gets rid of \n
+
+                        std::string str = user_message_.username() + " (" + timestamp + ")" + ": " + user_message_.message();
                         std::vector<std::string>* curr_history = subscriber_->getHistory();
                         std::vector<std::string>* curr_tab = subscriber_->getCurrTab();
 
                         if (last_received_message == "") {
                             if (curr_tab->at(0) == "in" && curr_tab->at(1) == subscriber_->getTopicName()) {
-                                std::cout << user_message_.username() + ": ";
+                                std::cout << user_message_.username() + " (" + timestamp + ")" + ": ";
                                 std::cout << user_message_.message() << std::endl;
                             }
 
@@ -80,7 +87,7 @@ private:
                         }
                         else if (last_received_message != str) {
                             if (curr_tab->at(0) == "in" && curr_tab->at(1) == subscriber_->getTopicName()) {
-                                std::cout << user_message_.username() + ": ";
+                                std::cout << user_message_.username() + " (" + timestamp + ")" + ": ";
                                 std::cout << user_message_.message() << std::endl;
                             }
 
