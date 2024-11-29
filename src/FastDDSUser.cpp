@@ -9,6 +9,9 @@
 #include <vector>
 #include <thread>
 #include <atomic>
+#include <chrono>
+#include <sstream>
+#include <fstream>
 
 // For colors
 #ifdef _WIN32
@@ -223,8 +226,9 @@ void printHomeMenu() {
     std::cout << "  2. Add a new user." << std::endl;
     std::cout << "  3. Chat with a user." << std::endl;
     std::cout << "  4. Remove a user." << std::endl;
-    std::cout << "  5. Change color of text." << std::endl;
-    std::cout << "  6. Exit the program." << std::endl << std::endl;
+    std::cout << "  5. Save chat log." << std::endl;
+    std::cout << "  6. Change color of text." << std::endl;
+    std::cout << "  7. Exit the program." << std::endl << std::endl;
 }
 
 // Get login info
@@ -270,6 +274,58 @@ void chatUser(std::string username, std::string other_user, std::vector<std::str
     curr_chat_tab.at(1) = "";
 
     std::cout << "Leaving chat with " + other_user + "." << std::endl;
+}
+
+void saveChat(std::string username, std::vector<std::string> threaded_usernames, std::vector<std::vector<std::string>> chat_histories) {
+    std::string saveUser;
+    std::cout << std::endl << "Which ongoing chat would you like to save?: ";
+
+    std::cin >> saveUser;
+    std::cin.ignore();
+
+    int index = findIndex(threaded_usernames, saveUser);
+
+    if (index == -1) {
+        std::cout << "You aren't currently chatting with a user named " << saveUser << "." << std::endl;
+        return;
+    }
+
+    std::vector<std::string> curr_history = chat_histories.at(index);
+
+    if (curr_history.empty()) {
+        std::cout << "You've added " << saveUser << ", but you haven't chatted with them yet." << std::endl;
+        return;
+    }
+
+    auto now = std::chrono::system_clock::now();
+    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
+    std::tm* timeInfo = std::localtime(&currentTime);
+
+    std::ostringstream dateStream;
+    dateStream << std::put_time(timeInfo, "%m-%d-%y");
+    std::string date = dateStream.str();
+    
+    std::ostringstream timeStream;
+    timeStream << std::put_time(timeInfo, "%H-%M-%S");
+    std::string time = timeStream.str();
+
+    // Format - Username_ChattedUser_MM-DD-YY_HH-MM-SS.txt
+    std::string filename = "./ChatLogs/" + username + "_" + saveUser + "_" + date + "_" + time + ".txt";
+    
+    std::ofstream chatLog(filename);
+
+    if (!chatLog) {
+        std::cerr << "Error creating chat log file." << std::endl;
+        return;
+    }
+
+    for (std::string& str : curr_history) {
+        chatLog << str << std::endl;
+    }
+
+    chatLog.close();
+
+    std::cout << "File " << filename << " was created." << std::endl;
 }
 
 void changeColor() {
@@ -369,6 +425,7 @@ int main()
 
         while (true) {
             std::cin >> option;
+            std::cin.ignore();
 
             if (std::cin.fail()) {
                 std::cin.clear();
@@ -379,8 +436,6 @@ int main()
                 break;
             }
         }
-
-        std::cin.ignore();
 
         if (option == 1) {
             if (!threaded_usernames.empty()) {
@@ -416,8 +471,9 @@ int main()
 
             removeUser(pubs, subs, threaded_usernames, to_remove, username, chat_histories);
         }
-        else if (option == 5) changeColor();
-        else if (option == 6) break;
+        else if (option == 5) saveChat(username, threaded_usernames, chat_histories);
+        else if (option == 6) changeColor();
+        else if (option == 7) break;
         else {
             std::cout << std::endl << "That's not an option. Try again. (1-5)" << std::endl;
         }

@@ -51,13 +51,13 @@ private:
             if (info.current_count_change == 1)
             {
                 matched_ = info.total_count;
-                std::cout << "Publisher matched." << std::endl;
+                //std::cout << "Publisher matched." << std::endl;
                 publisher_->setStatus(true);
             }
             else if (info.current_count_change == -1)
             {
                 matched_ = info.total_count;
-                std::cout << "Publisher unmatched." << std::endl;
+                //std::cout << "Publisher unmatched." << std::endl;
                 publisher_->setStatus(false);
             }
             else {
