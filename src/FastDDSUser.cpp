@@ -310,7 +310,7 @@ void saveChat(std::string username, std::vector<std::string> threaded_usernames,
     std::string time = timeStream.str();
 
     // Format - Username_ChattedUser_MM-DD-YY_HH-MM-SS.txt
-    std::string filename = "./ChatLogs/" + username + "_" + saveUser + "_" + date + "_" + time + ".txt";
+    std::string filename = "../../ChatLogs/" + username + "_" + saveUser + "_" + date + "_" + time + ".txt";
     
     std::ofstream chatLog(filename);
 
