@@ -72,7 +72,8 @@ private:
                         std::string timestamp = std::asctime(&local_time);
                         timestamp.pop_back(); // gets rid of \n
 
-                        std::string str = user_message_.username() + " (" + timestamp + ")" + ": " + user_message_.message();
+                        std::string str = user_message_.username() + ": " + user_message_.message();
+                        //std::string message = user_message_.username() + " (" + timestamp + ")" + ": " + user_message_.message();
                         std::vector<std::string>* curr_history = subscriber_->getHistory();
                         std::vector<std::string>* curr_tab = subscriber_->getCurrTab();
 
