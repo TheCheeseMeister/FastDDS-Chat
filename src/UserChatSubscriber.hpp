@@ -152,7 +152,7 @@ public:
 
         eprosima::fastdds::rtps::Locator_t initial_peer_locator;
         initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
-        eprosima::fastdds::rtps::IPLocator::setIPv4(initial_peer_locator, "10.0.0.221");
+        eprosima::fastdds::rtps::IPLocator::setIPv4(initial_peer_locator, "10.0.0.185");
         eprosima::fastdds::rtps::IPLocator::setPhysicalPort(initial_peer_locator, 5100);
         eprosima::fastdds::rtps::IPLocator::setLogicalPort(initial_peer_locator, 5100);
 
