@@ -17,6 +17,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/Locator.hpp>
 
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 
@@ -111,7 +112,7 @@ public:
 
         // Parse for IPs, comment out all of this to use FastDDS Locally
         
-        std::ifstream inputFile("../../ip_list.txt");
+        /*std::ifstream inputFile("../../ip_list.txt");
 
         if (!inputFile) {
             std::cerr << "Could not open file!" << std::endl;
@@ -131,8 +132,27 @@ public:
             participantQos.wire_protocol().builtin.initialPeersList.push_back(locator);
         }
 
-        inputFile.close();
+        inputFile.close();*/
         // End IP stuff
+
+        // TCP TEST
+        
+        auto tcp_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+        tcp_transport->add_listener_port(5100);
+
+        participantQos.transport().user_transports.push_back(tcp_transport);
+        participantQos.transport().use_builtin_transports = false;
+
+        eprosima::fastdds::rtps::Locator_t locator;
+        locator.kind = LOCATOR_KIND_TCPv4;
+        eprosima::fastdds::rtps::IPLocator::setIPv4(locator, "10.0.0.221");
+        eprosima::fastdds::rtps::IPLocator::setPhysicalPort(locator, 5100);
+        eprosima::fastdds::rtps::IPLocator::setLogicalPort(locator, 5100);
+
+        participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator);
+        participantQos.wire_protocol().default_unicast_locator_list.push_back(locator);
+
+        // TCP END
 
         participant_ = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
 

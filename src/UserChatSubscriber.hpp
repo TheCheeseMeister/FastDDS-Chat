@@ -143,6 +143,23 @@ public:
         DomainParticipantQos participantQos;
         participantQos.name("Participant_subscriber");
 
+        // TCP TEST
+
+        participantQos.transport().use_builtin_transports = false;
+
+        auto tcp_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+        participantQos.transport().user_transports.push_back(tcp_transport);
+
+        eprosima::fastdds::rtps::Locator_t initial_peer_locator;
+        initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
+        eprosima::fastdds::rtps::IPLocator::setIPv4(initial_peer_locator, "10.0.0.221");
+        eprosima::fastdds::rtps::IPLocator::setPhysicalPort(initial_peer_locator, 5100);
+        eprosima::fastdds::rtps::IPLocator::setLogicalPort(initial_peer_locator, 5100);
+
+        participantQos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator);
+
+        // TCP END
+
         participant_ = DomainParticipantFactory::get_instance()->create_participant(0, participantQos);
 
         if (participant_ == nullptr) {
