@@ -3,7 +3,7 @@
  */
 
 #include "UserChatPubSubTypes.hpp";
-//#include "Globals.hpp"
+#include "Globals.hpp"
 #include <chrono>
 #include <thread>
 #include <ctime>
@@ -32,7 +32,6 @@ private:
 
     std::string topic_name;
     std::vector<std::string>* history;  // Ongoing history of chat
-    std::vector<std::string>* end_signal; // Tells thread to end
     std::vector<std::string>* curr_tab; // Tells subscriber if user is tabbed into chat to output messages
 
     class SubListener : public DataReaderListener
@@ -107,7 +106,7 @@ private:
     listener_;
 
 public:
-    UserChatSubscriber(std::string topic_name, std::vector<std::string>* curr_history, std::vector<std::string>* signal, std::vector<std::string>* tab)
+    UserChatSubscriber(std::string topic_name, std::vector<std::string>* curr_history, std::vector<std::string>* tab)
         : participant_(nullptr)
         , subscriber_(nullptr)
         , topic_(nullptr)
@@ -115,7 +114,6 @@ public:
         , type_(new UserChatPubSubType())
         , listener_(this)
         , history(curr_history)
-        , end_signal(signal)
         , curr_tab(tab)
     {
         this->topic_name = topic_name;
@@ -189,10 +187,10 @@ public:
 
     void run() {
         while (true) {
-            //if (std::find(endThreadSignal.begin(), endThreadSignal.end(), topic_name) != endThreadSignal.end()) break;
-            if (std::find(end_signal->begin(), end_signal->end(), topic_name) != end_signal->end()) break;
+            if (std::find(endThreadSignal.begin(), endThreadSignal.end(), topic_name) != endThreadSignal.end()) break;
+            //if (std::find(end_signal->begin(), end_signal->end(), topic_name) != end_signal->end()) break;
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     }
 };

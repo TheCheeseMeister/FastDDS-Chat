@@ -3,7 +3,7 @@
 
 #include <vector>
 
-//extern std::vector<std::string> endThreadSignal;
+extern std::vector<std::string> endThreadSignal = {};
 //extern std::vector<std::string> curr_chat_tab;
 
 // for colors
