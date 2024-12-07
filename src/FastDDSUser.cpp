@@ -235,9 +235,24 @@ void printHomeMenu() {
 void getCredentials(std::string& username) {
     std::cout << "Please enter your login info below:" << std::endl << std::endl;
 
-    std::cout << "Username: ";
-    std::cin >> username;
-    std::cin.ignore();
+    while (true) {
+        std::cout << "Username: ";
+        std::cin >> username;
+        std::cin.ignore();
+        std::cout << std::endl;
+
+        if (username == "Notes") {
+            std::cout << "\"Notes\" can't be used as a name in order to share functionality with the GUI version. Try again." << std::endl << std::endl;
+        }
+        else if (username.length() < 3) {
+            std::cout << "Your username should be at least 3 characters long. Try again." << std::endl << std::endl;
+        }
+        else if (username.length() > 32) {
+            std::cout << "Your username should be at most 32 characters long. Try again." << std::endl << std::endl;
+        }
+        else  break;
+    }
+
     std::cout << std::endl;
 }
 
