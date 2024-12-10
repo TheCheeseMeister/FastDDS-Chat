@@ -24,7 +24,7 @@ events:
       The output was:
       0
       MSBuild version 17.9.8+b34f75857 for .NET Framework
-      Build started 12/7/2024 9:14:00 PM.
+      Build started 12/10/2024 6:21:49 PM.
       
       Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\3.29.3\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
       PrepareForBuild:
@@ -53,7 +53,7 @@ events:
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:00.74
+      Time Elapsed 00:00:00.72
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -79,7 +79,7 @@ events:
       The output was:
       0
       MSBuild version 17.9.8+b34f75857 for .NET Framework
-      Build started 12/7/2024 9:14:01 PM.
+      Build started 12/10/2024 6:21:50 PM.
       
       Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\3.29.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
       PrepareForBuild:
@@ -108,7 +108,7 @@ events:
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:00.67
+      Time Elapsed 00:00:00.60
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -127,8 +127,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ytfxgk"
-      binary: "D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ytfxgk"
+      source: "D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-uljfj4"
+      binary: "D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-uljfj4"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
       CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
@@ -137,40 +137,40 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ytfxgk'
+        Change Dir: 'D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-uljfj4'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_dabe4.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_6ca15.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.9.8+b34f75857 for .NET Framework
-        Build started 12/7/2024 9:14:03 PM.
+        Build started 12/10/2024 6:21:51 PM.
         
-        Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ytfxgk\\cmTC_dabe4.vcxproj" on node 1 (default targets).
+        Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-uljfj4\\cmTC_6ca15.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_dabe4.dir\\Debug\\".
+          Creating directory "cmTC_6ca15.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ytfxgk\\Debug\\".
-          Creating directory "cmTC_dabe4.dir\\Debug\\cmTC_dabe4.tlog\\".
+          Creating directory "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-uljfj4\\Debug\\".
+          Creating directory "cmTC_6ca15.dir\\Debug\\cmTC_6ca15.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_dabe4.dir\\Debug\\cmTC_dabe4.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_dabe4.dir\\Debug\\cmTC_dabe4.tlog\\unsuccessfulbuild".
+          Creating "cmTC_6ca15.dir\\Debug\\cmTC_6ca15.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_6ca15.dir\\Debug\\cmTC_6ca15.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_dabe4.dir\\Debug\\\\" /Fd"cmTC_dabe4.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_6ca15.dir\\Debug\\\\" /Fd"cmTC_6ca15.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.39.33523 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_dabe4.dir\\Debug\\\\" /Fd"cmTC_dabe4.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_6ca15.dir\\Debug\\\\" /Fd"cmTC_6ca15.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ytfxgk\\Debug\\cmTC_dabe4.exe" /INCREMENTAL /ILK:"cmTC_dabe4.dir\\Debug\\cmTC_dabe4.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ytfxgk/Debug/cmTC_dabe4.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ytfxgk/Debug/cmTC_dabe4.lib" /MACHINE:X64  /machine:x64 cmTC_dabe4.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_dabe4.vcxproj -> D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ytfxgk\\Debug\\cmTC_dabe4.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-uljfj4\\Debug\\cmTC_6ca15.exe" /INCREMENTAL /ILK:"cmTC_6ca15.dir\\Debug\\cmTC_6ca15.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-uljfj4/Debug/cmTC_6ca15.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-uljfj4/Debug/cmTC_6ca15.lib" /MACHINE:X64  /machine:x64 cmTC_6ca15.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_6ca15.vcxproj -> D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-uljfj4\\Debug\\cmTC_6ca15.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_dabe4.dir\\Debug\\cmTC_dabe4.tlog\\unsuccessfulbuild".
-          Touching "cmTC_dabe4.dir\\Debug\\cmTC_dabe4.tlog\\cmTC_dabe4.lastbuildstate".
-        Done Building Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ytfxgk\\cmTC_dabe4.vcxproj" (default targets).
+          Deleting file "cmTC_6ca15.dir\\Debug\\cmTC_6ca15.tlog\\unsuccessfulbuild".
+          Touching "cmTC_6ca15.dir\\Debug\\cmTC_6ca15.tlog\\cmTC_6ca15.lastbuildstate".
+        Done Building Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-uljfj4\\cmTC_6ca15.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:00.59
+        Time Elapsed 00:00:00.55
         
       exitCode: 0
   -
@@ -210,8 +210,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-bl4hbm"
-      binary: "D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-bl4hbm"
+      source: "D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ax80f4"
+      binary: "D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ax80f4"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
@@ -221,40 +221,40 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-bl4hbm'
+        Change Dir: 'D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ax80f4'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_f5a1c.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_93913.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.9.8+b34f75857 for .NET Framework
-        Build started 12/7/2024 9:14:04 PM.
+        Build started 12/10/2024 6:21:51 PM.
         
-        Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-bl4hbm\\cmTC_f5a1c.vcxproj" on node 1 (default targets).
+        Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ax80f4\\cmTC_93913.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_f5a1c.dir\\Debug\\".
+          Creating directory "cmTC_93913.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-bl4hbm\\Debug\\".
-          Creating directory "cmTC_f5a1c.dir\\Debug\\cmTC_f5a1c.tlog\\".
+          Creating directory "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ax80f4\\Debug\\".
+          Creating directory "cmTC_93913.dir\\Debug\\cmTC_93913.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_f5a1c.dir\\Debug\\cmTC_f5a1c.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_f5a1c.dir\\Debug\\cmTC_f5a1c.tlog\\unsuccessfulbuild".
+          Creating "cmTC_93913.dir\\Debug\\cmTC_93913.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_93913.dir\\Debug\\cmTC_93913.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f5a1c.dir\\Debug\\\\" /Fd"cmTC_f5a1c.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_93913.dir\\Debug\\\\" /Fd"cmTC_93913.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.39.33523 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f5a1c.dir\\Debug\\\\" /Fd"cmTC_f5a1c.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_93913.dir\\Debug\\\\" /Fd"cmTC_93913.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.29\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-bl4hbm\\Debug\\cmTC_f5a1c.exe" /INCREMENTAL /ILK:"cmTC_f5a1c.dir\\Debug\\cmTC_f5a1c.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-bl4hbm/Debug/cmTC_f5a1c.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-bl4hbm/Debug/cmTC_f5a1c.lib" /MACHINE:X64  /machine:x64 cmTC_f5a1c.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_f5a1c.vcxproj -> D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-bl4hbm\\Debug\\cmTC_f5a1c.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ax80f4\\Debug\\cmTC_93913.exe" /INCREMENTAL /ILK:"cmTC_93913.dir\\Debug\\cmTC_93913.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ax80f4/Debug/cmTC_93913.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:/ddsplace/FastDDS_Chat/build/CMakeFiles/CMakeScratch/TryCompile-ax80f4/Debug/cmTC_93913.lib" /MACHINE:X64  /machine:x64 cmTC_93913.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_93913.vcxproj -> D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ax80f4\\Debug\\cmTC_93913.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_f5a1c.dir\\Debug\\cmTC_f5a1c.tlog\\unsuccessfulbuild".
-          Touching "cmTC_f5a1c.dir\\Debug\\cmTC_f5a1c.tlog\\cmTC_f5a1c.lastbuildstate".
-        Done Building Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-bl4hbm\\cmTC_f5a1c.vcxproj" (default targets).
+          Deleting file "cmTC_93913.dir\\Debug\\cmTC_93913.tlog\\unsuccessfulbuild".
+          Touching "cmTC_93913.dir\\Debug\\cmTC_93913.tlog\\cmTC_93913.lastbuildstate".
+        Done Building Project "D:\\ddsplace\\FastDDS_Chat\\build\\CMakeFiles\\CMakeScratch\\TryCompile-ax80f4\\cmTC_93913.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:00.75
+        Time Elapsed 00:00:00.57
         
       exitCode: 0
   -
